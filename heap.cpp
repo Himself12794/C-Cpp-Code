@@ -13,9 +13,50 @@ struct entry {
 	bool hasRightChild;
 };
 
-vector<int> readFile(char fname[]) {
+template<typename T> void printV(vector<T> v) {
+	
+	cout << "{";
+	for (unsigned int i = 0; i < v.size(); ++i) {
+		cout << v[i];
+		if (i != v.size() - 1) cout << ", ";
+		else cout << "}" << endl;
+	}
+	
+}
+
+string rstrip(string &str) {
+	size_t l = str.find_last_not_of(' ');
+	
+	return str.substr(0, l + 1);
+}
+
+string strip(string &str) {
+	size_t f = str.find_first_not_of(' ');
+	size_t l = str.find_last_not_of(' ');
+	
+	return str.substr(f, (l - f + 1));
+}
+
+string center(string &str, size_t n) {
+	if (str.length() < n) {
+		size_t f = str.find_first_not_of(' ');
+		size_t l = n - str.find_last_not_of(' ');
+		
+		size_t i = 0;
+		bool s = true;
+		while (i < f + l - 1) {
+			if (s) str.insert(0, " ");
+			else str.insert(str.length(), " ");
+			s = !s;
+			i++;
+		}
+	} else return str;
+	return str;
+}
+
+vector<int> readFile(char const *fname) {
     
-	std::list<int> dl;
+	list<int> dl;
 	
 	fstream input;
 	input.open(fname);
@@ -125,7 +166,7 @@ vector<entry> inorder(vector<int> &data, int n = 0, int depth = 0) {
 string updateBars (string bars, int depth, bool isRightChild, bool hasRightChild) {
     int location1 = 5 * depth - 4; // location for level depth - 1
     int location2 = location1 + 5; // location for level depth
-    if (bars.length() < location2) {
+    if (bars.length() < (unsigned)location2) {
         bars = bars + string(location2 - bars.length(), ' ');
 	}
     if (depth == 0) {
@@ -133,16 +174,16 @@ string updateBars (string bars, int depth, bool isRightChild, bool hasRightChild
         
     } else if (isRightChild) {
         // remove the bar at level depth - 1
-        bars.insert(location1, " ");
+        bars.replace(location1, 1, " ");
     } else {
         // add a bar at level depth - 1
-        bars.insert(location1, "|");
+        bars.replace(location1, 1, "|");
 	}
     if (!hasRightChild) {
         // remove the bar at level depth, since no one else will remove it.
-        bars.insert(location2, " ");
+        bars.replace(location2, 1, " ");
 	}
-    return bars;
+    return rstrip(bars);
 }
 
 
@@ -150,7 +191,8 @@ string drawTree(vector<int> data) {
     string bars = "";
     list<string> results;
     vector<entry> items = inorder(data);
-	for (int i = 0; i < items.size(); ++i) {
+	for (unsigned int i = 0; i < items.size(); ++i) {
+		
 		int value = items[i].e;
 		int depth = items[i].depth;
 		bool isRightChild = items[i].isRightChild;
@@ -158,6 +200,8 @@ string drawTree(vector<int> data) {
 		
         results.push_back(bars);
         string valueStr = to_string(value);
+		valueStr = center(valueStr, 3);
+		
         if (!isRightChild) {
             bars = updateBars(bars, depth, isRightChild, hasRightChild);
 		}
@@ -168,7 +212,9 @@ string drawTree(vector<int> data) {
 			temp += " +---" + valueStr;
             results.push_back(temp);
 		}
-        if (isRightChild) bars = updateBars (bars, depth, isRightChild, hasRightChild);
+        if (isRightChild) {
+			bars = updateBars (bars, depth, isRightChild, hasRightChild);
+		}
         results.push_back(bars);
 	}
     results.reverse();
@@ -179,7 +225,7 @@ string drawTree(vector<int> data) {
     return temp;
 }
 
-string sortData(vector<int> data) {
+string sortData(vector<int> &data) {
     buildHeap(data);
     string result = drawTree(data);
     sortHeap(data);
@@ -200,19 +246,8 @@ bool verifySorted(vector<int> data) {
 
 }
 
-template<typename T> void printV(vector<T> v) {
-	
-	cout << "{";
-	for (int i = 0; i < v.size(); ++i) {
-		cout << v[i];
-		if (i != v.size() - 1) cout << ", ";
-		else cout << "}" << endl;
-	}
-	
-}
-
 void processData(vector<int> data) {
-
+	
 	string heap = sortData(data);
 	if (!verifySorted(data)) {
 		cout << "***** Warning: Data not sorted. *****" << endl;
@@ -221,12 +256,10 @@ void processData(vector<int> data) {
 	printV(data);
 }
 
-int main(int n, char **args[]) {
+int main(int n, char **args) {
 	
 	vector<int> v = {3,1,4,1,5,9,2,6,5,3,6};
 	
-    processData(v);
-    processData(readFile ("data.txt"));
+    //processData(v);
+	if (n > 1) processData(readFile ("data.txt"));
 }
-
-    
