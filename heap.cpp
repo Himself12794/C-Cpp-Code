@@ -9,11 +9,12 @@ using namespace std;
 struct entry {
 	int e;
 	int depth;
-	bool isRightChild;
-	bool hasRightChild;
+	bool is_right_child;
+	bool has_right_child;
 };
 
-template<typename T> void printV(vector<T> v) {
+template<typename T> 
+void print_v(vector<T> v) {
 	
 	cout << "{";
 	for (unsigned int i = 0; i < v.size(); ++i) {
@@ -54,7 +55,7 @@ string center(string &str, size_t n) {
 	return str;
 }
 
-vector<int> readFile(char const *fname) {
+vector<int> read_file(char const *fname) {
     
 	list<int> dl;
 	
@@ -71,41 +72,41 @@ vector<int> readFile(char const *fname) {
     return dv;
 }
 
-int parentIndex(int i) {
+int parent_index(int i) {
     return (i - 1) / 2;
 }
 
-int leftChildIndex(int i) {
+int left_child_index(int i) {
     return 2 * i + 1;
 }
 
-int rightChildIndex(int i) {
+int right_child_index(int i) {
     return 2 * i + 2;
 }
 
-void upHeap(vector<int> &data, int n) {
+void up_heap(vector<int> &data, int n) {
     if (n == 0) {
         return;
 	}
-    int p = parentIndex(n);
+    int p = parent_index(n);
     if (data[p] >= data[n]) {
         return;
     } else {
 		swap(data[p], data[n]);
-        upHeap(data, p);
+        up_heap(data, p);
 	}
 }
 
-void buildHeap(vector<int> &data) {
+void build_heap(vector<int> &data) {
     int n = data.size();
 	for (int i = 0; i < n; ++i) {
-        upHeap(data, i);
+        up_heap(data, i);
 	}
 }
 
-void downHeap(vector<int> &data, int n, int stop) {
-    int left = leftChildIndex(n);
-    int right = rightChildIndex(n);
+void down_heap(vector<int> &data, int n, int stop) {
+    int left = left_child_index(n);
+    int right = right_child_index(n);
 	
     if (left >= stop) {
         // case 1: already a leave
@@ -114,31 +115,32 @@ void downHeap(vector<int> &data, int n, int stop) {
         // case 2: only have a left child
         if (data[n] < data[left]) {
 			swap(data[n], data[left]);
-            downHeap(data, left, stop);
+            down_heap(data, left, stop);
         } else return;
     } else {
         // case 3: has both left and right children
         if (data[n] >= data[left] && data[n] >= data[right]) {
             return;
         } else {
-            int largestChild = left;
-            if (data [left] < data [right]) largestChild = right;
+            int largest_child = left;
+            if (data[left] < data[right]) largest_child = right;
 			
-			swap(data [n], data[largestChild]);
-            downHeap(data, largestChild, stop);
+			swap(data[n], data[largest_child]);
+            down_heap(data, largest_child, stop);
 		}
 	}
 }
 
-void sortHeap(vector<int> &data) {
+void sort_heap(vector<int> &data) {
     int n = data.size();
 	for (int i = n - 1; i > 0; --i) {
-		swap(data [0], data [i]);
-        downHeap(data, 0, i);
+		swap(data[0], data[i]);
+        down_heap(data, 0, i);
 	}
 }
 
-template<typename T> vector<T> concVect(vector<T> a, vector<T> b) {
+template<typename T> 
+vector<T> conc_vect(vector<T> a, vector<T> b) {
 	vector<T> ab;
 	ab.reserve(a.size() + b.size());
 	ab.insert(ab.end(), a.begin(), a.end());
@@ -152,18 +154,18 @@ vector<entry> inorder(vector<int> &data, int n = 0, int depth = 0) {
 		vector<entry> out;
         return out;
 	}
-    int left = leftChildIndex(n);
-    int right = rightChildIndex(n);
-    bool isRightChild = (n % 2) == 0; // only exception is for the root
-    bool hasRightChild = (n * 2 + 2) < nn;
+    int left = left_child_index(n);
+    int right = right_child_index(n);
+    bool is_right_child = (n % 2) == 0; // only exception is for the root
+    bool has_right_child = (n * 2 + 2) < nn;
 	
-	entry e = { data[n], depth, isRightChild, hasRightChild};
+	entry e = { data[n], depth, is_right_child, has_right_child};
 	vector<entry> a(1, e);
-	vector<entry> b = concVect(inorder(data, left, depth+1), a);
-	return concVect(b, inorder(data, right, depth+1));
+	vector<entry> b = conc_vect(inorder(data, left, depth+1), a);
+	return conc_vect(b, inorder(data, right, depth+1));
 }
 
-string updateBars (string bars, int depth, bool isRightChild, bool hasRightChild) {
+string update_bars(string bars, int depth, bool is_right_child, bool has_right_child) {
     int location1 = 5 * depth - 4; // location for level depth - 1
     int location2 = location1 + 5; // location for level depth
     if (bars.length() < (unsigned)location2) {
@@ -172,14 +174,14 @@ string updateBars (string bars, int depth, bool isRightChild, bool hasRightChild
     if (depth == 0) {
         // this is the root, no bar to remove
         
-    } else if (isRightChild) {
+    } else if (is_right_child) {
         // remove the bar at level depth - 1
         bars.replace(location1, 1, " ");
     } else {
         // add a bar at level depth - 1
         bars.replace(location1, 1, "|");
 	}
-    if (!hasRightChild) {
+    if (!has_right_child) {
         // remove the bar at level depth, since no one else will remove it.
         bars.replace(location2, 1, " ");
 	}
@@ -187,7 +189,7 @@ string updateBars (string bars, int depth, bool isRightChild, bool hasRightChild
 }
 
 
-string drawTree(vector<int> data) {
+string draw_tree(vector<int> data) {
     string bars = "";
     list<string> results;
     vector<entry> items = inorder(data);
@@ -195,25 +197,25 @@ string drawTree(vector<int> data) {
 		
 		int value = items[i].e;
 		int depth = items[i].depth;
-		bool isRightChild = items[i].isRightChild;
-		bool hasRightChild = items[i].hasRightChild;
+		bool is_right_child = items[i].is_right_child;
+		bool has_right_child = items[i].has_right_child;
 		
         results.push_back(bars);
-        string valueStr = to_string(value);
-		valueStr = center(valueStr, 3);
+        string value_str = to_string(value);
+		value_str = center(value_str, 3);
 		
-        if (!isRightChild) {
-            bars = updateBars(bars, depth, isRightChild, hasRightChild);
+        if (!is_right_child) {
+            bars = update_bars(bars, depth, is_right_child, has_right_child);
 		}
-        if (depth == 0) results.push_back(valueStr);
+        if (depth == 0) results.push_back(value_str);
         else {
-            int barPrefix = (depth-1) * 5;
-			string temp = bars.substr(0, barPrefix);
-			temp += " +---" + valueStr;
+            int bar_prefix = (depth-1) * 5;
+			string temp = bars.substr(0, bar_prefix);
+			temp += " +---" + value_str;
             results.push_back(temp);
 		}
-        if (isRightChild) {
-			bars = updateBars (bars, depth, isRightChild, hasRightChild);
+        if (is_right_child) {
+			bars = update_bars (bars, depth, is_right_child, has_right_child);
 		}
         results.push_back(bars);
 	}
@@ -225,14 +227,14 @@ string drawTree(vector<int> data) {
     return temp;
 }
 
-string sortData(vector<int> &data) {
-    buildHeap(data);
-    string result = drawTree(data);
-    sortHeap(data);
+string sort_data(vector<int> &data) {
+    build_heap(data);
+    string result = draw_tree(data);
+    sort_heap(data);
     return result;
 }
 
-bool verifySorted(vector<int> data) {
+bool verify_sorted(vector<int> data) {
     int n = data.size();
     if (n < 2) {
         return true;
@@ -245,17 +247,17 @@ bool verifySorted(vector<int> data) {
 
 }
 
-void processData(vector<int> data) {
+void process_data(vector<int> data) {
 	
-	string heap = sortData(data);
-	if (!verifySorted(data)) {
+	string heap = sort_data(data);
+	if (!verify_sorted(data)) {
 		cout << "***** Warning: Data not sorted. *****" << endl;
 	}
 	cout << heap << endl;
-	printV(data);
+	print_v(data);
 }
 
 int main(int n, char **args) {
 	if (n <= 1) cout << "Usage: heap <infile>" << endl;
-	else if (n > 1) processData(readFile("data.txt"));
+	else if (n > 1) process_data(read_file("data.txt"));
 }
