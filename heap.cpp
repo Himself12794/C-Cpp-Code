@@ -43,11 +43,11 @@ string center(string &str, size_t n) {
 		size_t l = n - str.find_last_not_of(' ');
 		
 		size_t i = 0;
-		bool s = true;
+		bool dl = l > f ? false : true; 
 		while (i < f + l - 1) {
-			if (s) str.insert(0, " ");
+			if (dl) str.insert(0, " ");
 			else str.insert(str.length(), " ");
-			s = !s;
+			dl = !dl;
 			i++;
 		}
 	} else return str;
@@ -257,9 +257,5 @@ void processData(vector<int> data) {
 }
 
 int main(int n, char **args) {
-	
-	vector<int> v = {3,1,4,1,5,9,2,6,5,3,6};
-	
-    //processData(v);
-	if (n > 1) processData(readFile ("data.txt"));
+	if (n > 1) processData(readFile("data.txt"));
 }
