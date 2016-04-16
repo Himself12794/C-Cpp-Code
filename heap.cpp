@@ -235,7 +235,6 @@ string sortData(vector<int> &data) {
 bool verifySorted(vector<int> data) {
     int n = data.size();
     if (n < 2) {
-        //# std::list of length less than two is sorted by definition
         return true;
     } else {
 		for (int i = 1; i < n; ++i) {
@@ -257,5 +256,6 @@ void processData(vector<int> data) {
 }
 
 int main(int n, char **args) {
-	if (n > 1) processData(readFile("data.txt"));
+	if (n <= 1) cout << "Usage: heap <infile>" << endl;
+	else if (n > 1) processData(readFile("data.txt"));
 }
