@@ -1,4 +1,4 @@
-
+*.exe
 /Debug
 /Release
 /.settings/
