@@ -31,8 +31,8 @@ void calc_avg(void) {
 int main(int argc, char **argv) {
 
     // Allocate memory for global array
-    vals = malloc( (argc-1) * sizeof(vals[0]) );
     count = argc-1;
+    vals = malloc( count * sizeof(vals[0]) );
 
     // Store data in global array
     for (size_t i = 0; i < count; i++) vals[i] = atoi(argv[i+1]);
