@@ -1,0 +1,9 @@
+/Debug
+/Release
+/.settings/
+.cproject
+.project
+*.stackdump
+/CSAPP/
+/OSC9e/
+*.exe
